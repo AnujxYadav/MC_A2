@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Weather App Q1</string>
+    <string name="search_button">Search</string>
+    <string name="city_name">City Name</string>
+    <string name="date_input">Date (DD:MM:YYYY)</string>
+    <string name="dialogMaxTemperature">Max Temperature\n in Degree</string>
+    <string name="dialogMinTemperature">Min Temperature\n in Degree</string>
+</resources>
