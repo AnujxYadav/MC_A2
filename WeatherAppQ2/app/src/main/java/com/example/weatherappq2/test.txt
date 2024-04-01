@@ -1,0 +1,85 @@
+private ArrayList<String> fetch_data_from_API(String city, String date) {
+
+        // change the format from dd:mm:yyyy to yyyy-mm-dd
+        String[] dateArray = date.split("-");
+        String newDate = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
+
+        ArrayList<String> data = new ArrayList<>();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/" + city + "/" + newDate + "/" + newDate + "?key=R8S3X48KHHVQQA3HBEG3HS4VU";
+
+//        String url = "https://httpbin.org/get";
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    // Parse the response here
+
+                    // print the response
+                    System.out.println(response);
+                    // parsing Json response
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(response);
+                        JSONArray daysArray = jsonObject.getJSONArray("days");
+                        JSONObject dayObject = daysArray.getJSONObject(0);
+                        double tempmin = dayObject.getDouble("tempmin");
+                        double tempmax = dayObject.getDouble("tempmax");
+                        tempmin = (tempmin - 32) * 5 / 9;
+                        tempmax = (tempmax - 32) * 5 / 9;
+                        tempmin = Math.round(tempmin * 10.0) / 10.0;
+                        tempmax = Math.round(tempmax * 10.0) / 10.0;
+                        String windspeed = dayObject.getString("description");
+                        String icon = dayObject.getString("icon");
+                        icon = icon.replace("-", "_");
+                        data.add(String.valueOf(tempmin));
+                        data.add(String.valueOf(tempmax));
+                        data.add(windspeed);
+                        data.add(icon);
+                    } catch (JSONException e) {
+                        Toast.makeText(this, "Data not found", Toast.LENGTH_SHORT).show();
+                    }
+                }, error -> {
+            if(error == null || error.getMessage() == null){
+                Toast.makeText(this, "Data not found", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String errorText = error.getMessage();
+
+            if(errorText.contains("No address associated with hostname")){
+                Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(this, "Data not found", Toast.LENGTH_SHORT).show();
+            }
+
+            error.printStackTrace();
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+        return data;
+    }
+
+
+    private ArrayList<String> fetch_data_from_API(String city, String date) {
+            ArrayList<String> data = new ArrayList<>();
+            // generate random temperature
+            double tempmin = Math.random() * 100;
+            double tempmax = Math.random() * 100;
+            tempmax = Math.round(tempmax * 10.0) / 10.0;
+            tempmin = Math.round(tempmin * 10.0) / 10.0;
+            String description = "Sunny";
+            String icon = "rain";
+            data.add(String.valueOf(tempmin));
+            data.add(String.valueOf(tempmax));
+            data.add(description);
+            data.add(icon);
+            System.out.println("Data from API: " + city + " " + date);
+            for(String s : data) {
+                System.out.println(s);
+            }
+            return data;
+        }
